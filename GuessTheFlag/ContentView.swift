@@ -40,7 +40,7 @@ struct ContentView: View {
     @State private var scoreTitle = ""
     @State private var textLast = ""
     @State private var scoreNow = 0
-    @State private var attempt = 0
+    @State private var attempt = 1
     @State private var scoreAfter = 0
     
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled()
@@ -120,6 +120,7 @@ struct ContentView: View {
             }
             attempt += 1
             showingScore = true
+            lastAttempt = false
         } else {
             if number == correctAnswer {
                 scoreNow += 1
@@ -137,7 +138,7 @@ struct ContentView: View {
         textLast = "Game over!"
         scoreAfter = scoreNow
         scoreNow = 0
-        attempt = 0
+        attempt = 1
         lastAttempt = true
     }
 }
