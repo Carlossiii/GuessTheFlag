@@ -21,6 +21,7 @@ extension View {
     }
 }
 
+/*
 struct FlagImage: View {
     var countries: [String]
     var number: Int
@@ -33,6 +34,7 @@ struct FlagImage: View {
             .shadow(radius: 5)
     }
 }
+*/
 
 struct ContentView: View {
     @State private var showingScore = false
@@ -42,6 +44,8 @@ struct ContentView: View {
     @State private var scoreNow = 0
     @State private var attempt = 1
     @State private var scoreAfter = 0
+
+    @State private var selectedFlag = -1
     
     @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"].shuffled()
     @State private var correctAnswer = Int.random(in: 0...2)
@@ -77,9 +81,17 @@ struct ContentView: View {
                     
                     ForEach(0..<3) { number in
                         Button {
-                            flagTapped(number)
+                                flagTapped(number)
                         } label: {
-                            FlagImage(countries: countries, number: number)
+                            Image(countries[number])
+                                .renderingMode(.original)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .shadow(radius: 5)
+                                .rotation3DEffect(.degrees(selectedFlag == number ? 360 : 0), axis: (x: 0, y: 1, z: 0))
+                                .opacity(selectedFlag == -1 || selectedFlag == number ? 1.0 : 0.25)
+                                .scaleEffect(selectedFlag == -1 || selectedFlag == number ? 1.0 : 0.75)
+                                .grayscale(selectedFlag == -1 || selectedFlag == number ? 0.0 : 1.0)
+                                .animation(.default, value: selectedFlag)
                         }
                     }
                 }
@@ -111,6 +123,7 @@ struct ContentView: View {
     }
     
     func flagTapped (_ number: Int) {
+        selectedFlag = number
         if attempt < 8 {
             if number == correctAnswer {
                 scoreTitle = "Correct!"
@@ -118,7 +131,6 @@ struct ContentView: View {
             } else {
                 scoreTitle = "Wrong! \n That's the flag of \(countries[number])."
             }
-            attempt += 1
             showingScore = true
             lastAttempt = false
         } else {
@@ -130,8 +142,10 @@ struct ContentView: View {
     }
     
     func askQuestion() {
+        selectedFlag = -1
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        attempt += 1
     }
     
     func reset() {
